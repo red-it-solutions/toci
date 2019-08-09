@@ -1,0 +1,26 @@
+# Zona pentru test
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: include vars
+      include_vars:
+        dir: group_vars
+              
+    - name: Clone the template
+      vmware_guest:
+        hostname: "{{ vcenter_ip }}"
+        username: "{{ vcenter_username}}"
+        password: "{{ vcenter_password}}"
+        datacenter: "{{ datacenter }}"
+        validate_certs: no
+        state: absent
+        name: "{{ sys_linux}}_{{ item }}"
+        template: "{{ centos7_template }}"
+        resource_pool: "{{ rp_laborator_prefix }}_{{ item }}"
+        folder: "{{ default_name_folder }}{{ dev_folder }}"
+        hardware:
+          num_cpu: "{{ num_cpu_centos7_v01 }}"
+          memory_mb: "{{ memory_mb_centos7_v01 }}"
+        state_change_timeout: "{{ asteapta_status_vm }}"
+      with_items: "{{ with_items_vm_std }} " 
