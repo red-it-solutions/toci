@@ -1,0 +1,35 @@
+---
+- name: Create a VM from a template - Windows 10
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Clone the template
+    vmware_guest:
+      hostname: "{{ vcenter_ip }}"
+      username: "{{ vcenter_username}}"
+      password: "{{ vcenter_password}}"
+      datacenter: "{{ datacenter }}"
+      validate_certs: no
+      state: present
+      name: "{{ template_Windows10 }_{{ item }}"
+      template: "{{ template_Windows10 }}"
+      resource_pool: "Laborator_0{{ item }}"
+      folder: "/Laborator_0{{ item }}"
+      hardware:
+        num_cpu: "{{ num_cpu_windows_v01 }}"
+        memory_mb: "{{ memory_mb_windows_v01 }}"
+      networks:
+        - name: "{{ network_vm_network }}"
+          type: static
+          ip: "{{ clasa_adresa_ip }}.{{ adresa_ip_windows10_User_XX }}{{ item }}"
+          netmask: "{{ netmask_centos7 }}"
+          gateway: "{{ clasa_adresa_ip }}.{{ gateway_centos7 }}"
+          dns_servers:
+          - 192.168.100.1
+      customization:
+          autologon: yes
+          runonce:
+          - powershell.exe -ExecutionPolicy Unrestricted -File C:\Windows\Temp\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP
+    with_items :
+    - 1  

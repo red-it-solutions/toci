@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: include vars
+      include_vars:
+        dir: group_vars
+
+    - name: Creaza resource pools
+      vmware_resource_pool:
+        hostname: "{{ vcenter_ip }}"
+        username: "{{ vcenter_username}}"
+        password: "{{ vcenter_password}}"
+        validate_certs: False
+        state: absent
+        datacenter: "{{ datacenter }}"
+        cluster: "{{ cluster }}"
+        cpu_limit: 1000
+        mem_limit: 2048
+        resource_pool: "Laborator{{ item }}"
+      with_items:
+        - _01
+        - _02
+        - _03

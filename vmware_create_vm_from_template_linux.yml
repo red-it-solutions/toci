@@ -1,0 +1,52 @@
+---
+- name: Create a VM from a template - linux
+  hosts: localhost
+  connection: local
+  gather_facts: no  
+  vars_prompt:
+   - name: vm_state 
+     prompt: State as - present/absent/poweredon/poweredoff/restarted 
+     default: poweredon
+     private: no
+   - name: vm_state_enforce
+     prompt: State as - no / yes - only for removing vm
+     default: no
+     private: no
+   - name: vm_state_customization
+     prompt: State as - no / yes 
+     default: yes
+     private: no
+   - name: vm_state_ip_address
+     prompt: State as - no / yes
+     default: no
+     private: no
+     
+  tasks:
+  - name: Clone the template
+    vmware_guest:
+      hostname: "{{ vcenter_ip }}"
+      username: "{{ vcenter_username}}"
+      password: "{{ vcenter_password}}"
+      datacenter: "{{ datacenter }}"
+      validate_certs: no
+      state: "{{ vm_state }}"
+      force: "{{ vm_state_enforce }}"
+      name: "VM_{{ item }}"
+      template: "{{ template_CentOS7 }}"
+      resource_pool: "Laborator_{{ item }}"
+      folder: "/Laborator_{{ item }}"
+      hardware:
+        num_cpu: "{{ num_cpu_centos7_v01 }}"
+        memory_mb: "{{ memory_mb_centos7_v01 }}"
+      networks:
+        - name: "{{ network_vm_network }}"
+          start_connected: yes
+          type: static
+          ip: "{{ clasa_adresa_ip }}.{{ adresa_ip_centos7_User_XX }}{{ item }}"
+          netmask: "{{ netmask_centos7 }}"
+          gateway: "{{ clasa_adresa_ip }}.{{ gateway_centos7 }}"
+      wait_for_ip_address: "{{ vm_state_ip_address }}"
+      wait_for_customization: "{{ vm_state_customization }}"
+    with_items: 
+     - "01"
+     - "02"

@@ -1,0 +1,30 @@
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: include vars
+      include_vars:
+        dir: group_vars
+
+    - name: Create Datacenter in vCenter
+      local_action:
+        module: vmware_datacenter
+        datacenter_name: "{{ datacenter }}"
+        hostname: "{{ vcenter_ip}}"
+        username: "{{ vcenter_username}}"
+        password: "{{ vcenter_password}}"
+        validate_certs: False
+        state: present
+
+    - name: Create Cluster in datacenter
+      local_action:
+        module: vmware_cluster
+        hostname: "{{ vcenter_ip}}"
+        username: "{{ vcenter_username}}"
+        password: "{{ vcenter_password}}"
+        validate_certs: False
+        state: present
+        datacenter_name: "{{ datacenter }}"
+        cluster_name: "{{ cluster }}"
+        enable_ha: false
+        enable_drs: true
+

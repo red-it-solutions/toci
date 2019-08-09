@@ -1,0 +1,86 @@
+---
+datacenter: Datacenter
+cluster: Cluster
+datastore: datastore2
+esxi_host_ip: 192.168.100.241
+vcenter_ip: 192.168.100.242
+vcenter_username: kali@red.local
+vcenter_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63373738386639623766333765646266323731623530336132316236626234643866373330623465
+          3038323935323039336661646534343562653132343465390a653864363236366131363836653834
+          32613030613831356639626162643630656166613530373466353734633839313832313231333234
+          6162303439613363620a323434366663366139323639326632663034656362623334373161663034
+          3734
+# Deploy Number
+number_of_instances: 1
+
+# vCenter MAC
+vcsa_mac: "00:50:56:86:"
+vm_mac: "0c:24"
+
+# Template Area
+template_CentOS7: Template-Centos7
+template_Windows10: Template-Windows10
+
+# Network Area
+network_dummy: Dummy
+network_vm_network: VM Network
+
+# IP - Clase IP
+clasa_adresa_ip: 192.168
+
+# IP - Adrese IP
+adresa_ip_centos7_User_XX: 100.1
+adresa_ip_windows10_User_XX: 100.1
+
+# IP - Mask, Gateway & DNS
+netmask_centos7: 255.255.255.0
+gateway_centos7: 100.1
+dns_servers_windows: 100.1
+dns_servers_google: 8.8.8.8
+domain: red.local
+
+
+# Hardware Area
+num_cpu_centos7_v01: 2
+memory_mb_centos7_v01: 2048
+num_cpu_windows_v01: 2
+memory_mb_windows_v01: 4096
+
+
+
+# -------------------- Infra-Planner --------------------
+
+# Status arhitectura
+status_folder: present
+status_rp: present
+status_vm_on: poweredon
+status_vm_off: poweredoff
+asteapta_status_vm: 1
+asteapta_modificari_vm: yes
+asteapta_confirmare_ip: yes
+
+
+# Denumire Laborator
+default_name_folder: "Dev-"
+dev_folder: "Atac-DDos"
+
+# Denumire Resource Pool
+rp_laborator_prefix: Lab-DDos
+
+# Denumire VM-uri pentru template
+centos7_template: linux_base_template
+windows10_template: windows_base_template
+
+# Denumire VM-uri studenti
+sys_linux: linux
+sys_windows: windows
+
+# Numar RP / VM's
+with_items_vm_rp:
+- "_01"
+- "_02"
+with_items_vm_std:
+- "01"
+- "02"

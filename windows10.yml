@@ -1,0 +1,69 @@
+---
+# create a new VM from a template
+- name: VM from template
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    vcenter_server: "192.168.100.242"
+    vcenter_datacenter: "Datacenter"
+    vcenter_cluster: "Cluster"
+    vcenter_datastore: "datastore2"
+    vcenter_host: "192.168.100.241"
+    vcenter_network: "VM Network"
+    vcenter_template: "Template-Windows10"
+    vcenter_vm_ip: "192.168.100.1"
+    vm_id: "03"
+  vars_prompt:
+   - name: vm_state 
+     prompt: State as - present/absent/poweredon/poweredoff/restarted 
+     default: poweredon
+     private: no
+   - name: vm_state_enforce
+     prompt: State as - no / yes - only for removing vm
+     default: no
+     private: no
+   - name: vm_state_customization
+    prompt: State as - no / yes 
+     default: yes
+     private: no     
+  tasks:
+    - name: Create a Windows 10 virtual machine from a template
+      vmware_guest:
+        hostname: "{{ vcenter_server }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        esxi_hostname: "{{ vcenter_host }}"
+        validate_certs: False
+        folder: "/Laborator_{{ vm_id }}"
+        resource_pool: "Laborator_{{ vm_id }}"
+        name: "Windows10_{{ vm_id }}"
+        state: "{{ vm_state }}"
+        force: "{{ vm_state_enforce }}"
+        template: "{{ vcenter_template }}"   
+#        disk:
+#         - size_gb: "{{ disk_size | default(60) }}"
+#           type: thin
+#           datastore: "{{ vcenter_datastore }}"
+        hardware:
+          memory_mb: 4096
+          num_cpus: 2          
+          scsi: lsilogicsas         
+          version: 13 # Hardware version of virtual machine        
+        networks:
+          - name: "{{ vcenter_network }}"
+            ip: "{{ vcenter_vm_ip }}{{ vm_id }}"
+            netmask: 255.255.255.0
+            gateway: 192.168.100.1
+        wait_for_ip_address: false
+        customization:      
+           hostname: "Windows{{ vm_id }}"    
+           dns_servers:
+             - 192.168.100.1
+             - 8.8.8.8
+           timezone: 115 # (GMT+02:00) Bucharest
+        wait_for_customization: "{{ vm_state_customization }}"
+#      delegate_to: localhost
+      register: Windows10_deploy
+      tags: "Windows10_{{ vm_id }}"
